@@ -10,6 +10,7 @@ const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [products, setProducts] = useState([]);
   const contractABI = abi.abi;
+  
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -54,28 +55,41 @@ const App = () => {
     }
   }
 
-  const getAllWaifus = async() => {
+  const deployContract = () => {
     try {
       const { ethereum } = window;
 
       if (ethereum) {
-          const provider = new ethers.providers.Web3Provider(ethereum);
-          const signer = provider.getSigner();
 
           // /*
           // * You're using contractABI here
           // */
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
         const waifuContract = new ethers.Contract(contractAddress, contractABI, signer);
-        let waifus = [];
+        return waifuContract
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+        console.log(error);
+    }
+  }
+
+  const contract = deployContract();
+
+  const getAllWaifus = async({waifuContract}) => {
+    
+        
         const waifuNames = await waifuContract.get_all_waifu_names();
         if (waifuNames.length != 0) {
             console.log(waifuNames);
         } else {
             console.log("No waifu names found");
         }
-          
+        let waifus = [];
         let id = 0;
-        waifuNames.forEach( async(waifuName) => {
+        waifuNames.forEach( async({waifuName}) => {
           const waifuDetail = await waifuContract.get_waifu_collection_detail(waifuName);
           const waifuUrl = await waifuContract.get_waifu_collection_url(waifuName);
           waifus.push({
@@ -86,17 +100,14 @@ const App = () => {
           );
           id += 1;
         });
-        setProducts(waifus)
-      } else {
-        console.log("Ethereum object doesn't exist!");
-      }
-    } catch (error) {
-        console.log(error);
-    }
+        setProducts(waifus);    
   }
-
+  
+  
+  
   useEffect(() => {
     checkIfWalletIsConnected();
+    getAllWaifus({contract})
   }, [])
 
   return (
@@ -113,7 +124,7 @@ const App = () => {
             <Route exact path="/form">
               <Header>
               </Header>
-              <AddWaifu/> 
+              <AddWaifu contract={contract}/> 
             </Route>
 
           </Switch> 
