@@ -30,7 +30,7 @@ const Navbar = (currentAccount, connectWallet) => {
                         )}
                     <div className={classes.button}>
                         <IconButton component={Link} to="/form" color="inherit">
-                            Add new
+                            Add Waifu
                         </IconButton>
                     </div>
                 </Toolbar>

@@ -22,7 +22,7 @@
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [], 
       "name": "get_all_waifu_names",
       "outputs": [
         {

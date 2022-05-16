@@ -78,9 +78,10 @@ const App = () => {
 
   const contract = deployContract();
 
-  const getAllWaifus = async({waifuContract}) => {
-    
-        
+  const getAllWaifus = async() => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const waifuContract = new ethers.Contract(contractAddress, contractABI, signer);
         const waifuNames = await waifuContract.get_all_waifu_names();
         if (waifuNames.length != 0) {
             console.log(waifuNames);
@@ -88,28 +89,35 @@ const App = () => {
             console.log("No waifu names found");
         }
         let waifus = [];
-        let id = 0;
-        waifuNames.forEach( async({waifuName}) => {
-          const waifuDetail = await waifuContract.get_waifu_collection_detail(waifuName);
-          const waifuUrl = await waifuContract.get_waifu_collection_url(waifuName);
+        
+        let id;
+        for (id=0; id<waifus.length; id++){
+          let waifuName = waifuNames[id];
+          let waifuDetail = await waifuContract.get_waifu_collection_detail(waifuName);
+          let waifuUrl = await waifuContract.get_waifu_collection_url(waifuName);
           waifus.push({
             id : id,
             name : waifuName,
             detail : waifuDetail,
             url : waifuUrl}
           );
-          id += 1;
-        });
-        setProducts(waifus);    
+
+        }
+        return waifus;    
   }
   
+  let waifus = getAllWaifus();
+  waifus.resolve(
+    data => setProducts(data)
+  )
+  console.log(products);
   
   
   useEffect(() => {
     checkIfWalletIsConnected();
-    getAllWaifus({contract})
+    getAllWaifus()
   }, [])
-
+  
   return (
     
       <Router>
@@ -118,13 +126,13 @@ const App = () => {
           <Switch>
 
             <Route exact path="/">
-              <Products products={products} />
+              <Products products={waifus} />
             </Route>
 
             <Route exact path="/form">
               <Header>
               </Header>
-              <AddWaifu contract={contract}/> 
+              <AddWaifu contract={products}/> 
             </Route>
 
           </Switch> 

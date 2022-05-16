@@ -3,11 +3,10 @@ import {Card, CardMedia, CardContent, CardActions, Typography, IconButton} from 
 
 import useStyles from './styles';
 
-const Product = ({product}) => {
+const Product = async({product}) => {
     const classes = useStyles();
-
+    
     console.log(product);
-    return <div>test</div>
     return (
     <Card className={classes.root}>
         <CardMedia className={classes.media} image={product.url} title={product.name} />
