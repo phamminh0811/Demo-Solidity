@@ -5,7 +5,7 @@ import Product from './Product/Product';
 import useStyles from './styles'
 
 
-const Products = async({ products }) => {
+const Products = ({ products }) => {
     const classes = useStyles();
     return(
         <main className={classes.content}>

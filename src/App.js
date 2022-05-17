@@ -91,7 +91,7 @@ const App = () => {
         let waifus = [];
         
         let id;
-        for (id=0; id<waifus.length; id++){
+        for (id=0; id<waifuNames.length; id++){
           let waifuName = waifuNames[id];
           let waifuDetail = await waifuContract.get_waifu_collection_detail(waifuName);
           let waifuUrl = await waifuContract.get_waifu_collection_url(waifuName);
@@ -106,16 +106,15 @@ const App = () => {
         return waifus;    
   }
   
-  let waifus = getAllWaifus();
-  waifus.resolve(
-    data => setProducts(data)
-  )
-  console.log(products);
+  
   
   
   useEffect(() => {
     checkIfWalletIsConnected();
-    getAllWaifus()
+    getAllWaifus().then(
+      waifus => {
+        setProducts(waifus);
+      });
   }, [])
   
   return (
@@ -126,13 +125,13 @@ const App = () => {
           <Switch>
 
             <Route exact path="/">
-              <Products products={waifus} />
+              <Products products={products}/>
             </Route>
 
             <Route exact path="/form">
               <Header>
               </Header>
-              <AddWaifu contract={products}/> 
+              <AddWaifu contract={contract}/> 
             </Route>
 
           </Switch> 
